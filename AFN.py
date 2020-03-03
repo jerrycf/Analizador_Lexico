@@ -206,14 +206,12 @@ class AFN(object):
         # Se checan todas las transiciones con Epsilon en el estado inicial
         # y se agregan a la cola para evaluarlos después
         print("Funcion para convertir el AFN general a AFD")
-        subconjuntos = [] # Donde se guardan los subconjuntos
+        subconjuntos = [] # Donde se guardan los subconjuntos para generar el AFD final
         alfabetoActual = set()
-        A = Cola()
+        A = Cola() # Cola para evaluar los subconjuntos 
         simbActual = 'Epsilon'
-        
-        S = Subconjunto()
         cont = 0
-        S.setIdS(cont)
+        S = Subconjunto(cont)
         S.addSubEstados(self.edoIni)
         # Se agregan a una cola todos los estados que transiciona el estado inicial
         for tran in self.edoIni.transiciones:
@@ -224,7 +222,8 @@ class AFN(object):
         SEdoIni = Estado(cont)
         # Se recorre la cola para buscar todas las transiciones de epsilon
         while not A.isEmpty():
-            edo = A.pop()
+            #edo = A.pop()
+            S = A.pop()
             print("edoIni -> ", edo.getIdEdo())
             for tran in edo.transiciones:
                 # Hay que marcar los estados, si no se puede llegar a ciclar o agregar 
@@ -268,22 +267,25 @@ class AFN(object):
         return
 
     def toAFD2(self):
-        simbActual = 'Epsilon'
-        subconjuntos = []
+        # simbActual = 'Epsilon'
+        subconjuntos = [] # Aqui se guardan los subconjuntos finales para crear el AFD
         alfabetoActual = set()
-        inQ = Cola()
+        inQ = Cola() # Cola para ir evaluando los estados que se van encontrando
         A = Cola() # Cola de los subconjuntos que se deben de analizar.
         cont = 0
         # Se crea una instancia de subconjunto para empezar la busqueda.
         S = Subconjunto(cont)
         cont += 1
         S.addSubEstados(self.edoIni) # Se agrega el estado inicial para 
+        S.setSimb('Epsilon')
         # poder después empezar a realizar las busquedas con Epsilon y otros símbolos
         A.add(S)
         subconjuntos.append(S)
         print("Empieza la cola con el estado inicial.")
         while not A.isEmpty():
             S = A.pop()
+            subEdosTemp = []
+
             for subEdo in S.subEstados:
                 print("SubEstado de S", S.getIdS(), ": ", subEdo.getIdEdo())
                 self.resetChecked()
@@ -292,10 +294,10 @@ class AFN(object):
                 while not inQ.isEmpty():
                     edo = inQ.pop()
                     if not edo.isChecked():
-                        # Estado no visitado, se agrega al arreglo de estados del subconjunto.
-                        S.addEdo(edo)
                         # Se marca el estado como visitado.
                         edo.checked = True
+                        # Se agrega al arreglo de estados del subconjunto.
+                        S.addEdo(edo)
                         # Se recorren las transiciones del estado actual.
                         for trans in edo.transiciones:
                             # Checar si es una transicion Epsilon o de un nuevo simbolo
@@ -306,8 +308,31 @@ class AFN(object):
                                 # checando que el estado a agregar no haya sido evaluado antes.
                                 # Si se encuentra un simbolo repetido, se debe de agregar el estado
                                 # al set subEstados del subconjunto que pertenece dicho símbolo.
-                                print("Edo no agregado, checar si se puede agregar")
+                                print("Se encuentra un nuevo simbolo a evaluar: ", trans.simb)
+                                band = False
+                                for toCheck in subEdosTemp:
+                                    if toCheck.simb == trans.simb:
+                                        toCheck.addSubEstados(trans.getEdo())
+                                        band = True
+                                        break
+                                if band == False:
+                                    SubNew = Subconjunto(cont)
+                                    cont += 1
+                                    SubNew.simb = trans.simb
+                                    SubNew.addSubEstados(trans.getEdo())
+                                    subEdosTemp.append(SubNew)
 
+            print("Subconjunto S", S.getIdS(), " finalizado de evaluar.")
+            # Checar si los subconjuntos en subEdosTemp no se han evaluado antes en la cola A
+            for temp in subEdosTemp:
+                temp.printSubconjunto()
+                S.addTransicion(temp.simb, temp)
+            
+            S.printSubconjunto()
+            subconjuntos.append(S)
+
+            # Falta agregar los demas subconjuntos a la cola A para seguir las busquedas
+        return 
 
     def printAFN(self):
         for edos in self.edosAFN:

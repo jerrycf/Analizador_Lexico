@@ -20,3 +20,6 @@ class Cola:
     def clear(self):
         self.items.clear()
         return
+
+    def getItems(self):
+        return self.items

@@ -29,7 +29,7 @@ def crearAFNBasico():
     f = AFN(simb)
     f.setIds()
     afns.append(f)
-    print("Cantidad de afns catuales: ", len(afns))
+    print("Cantidad de afns actuales: ", len(afns))
     # f1.printAFN()
 
 def cerr_pos():
@@ -154,7 +154,7 @@ def convertAFNtoAFD():
         return
     
     #afnGen.printAFN()
-    afnGen.toAFD()  
+    afnGen.toAFD2()  
     
 
 #MAIN CODE

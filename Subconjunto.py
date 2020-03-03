@@ -6,15 +6,20 @@ from Cola import Cola
 class Subconjunto(object):
     def __init__(self, id = -1):
         self.idS = id
-        # self.simb = c
+        self.simb = 'Epsilon'
         # self.subEstados = []
         self.subEstados = set()
         self.edos = []
         self.transiciones = []
         self.clearSub()
+        self.token = -1
 
-    #def getSimb(self):
-    #    return self.simb
+    def getSimb(self):
+        return self.simb
+
+    def setSimb(self, c):
+        self.simb = c
+        return
 
     def setIdS(self, id):
         self.idS = id
@@ -22,6 +27,10 @@ class Subconjunto(object):
     
     def getIdS(self):
         return self.idS
+
+    def setToken(self, t):
+        self.token = t
+        return
 
     def clearSub(self):
         self.edos.clear()
