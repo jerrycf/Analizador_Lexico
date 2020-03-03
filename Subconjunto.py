@@ -1,26 +1,32 @@
 from Estado import Estado
 from Transicion import Transicion
+from TransicionSubconjunto import TransicionSubconjunto
 from Cola import Cola
 
 class Subconjunto(object):
-    def __init__(self, c="Epsilon"):
-        self.idS = -1
-        self.simb = c
-        #self.subEstados = []
+    def __init__(self, id = -1):
+        self.idS = id
+        # self.simb = c
+        # self.subEstados = []
         self.subEstados = set()
         self.edos = []
+        self.transiciones = []
         self.clearSub()
 
-    def getSimb(self):
-        return self.simb
+    #def getSimb(self):
+    #    return self.simb
 
     def setIdS(self, id):
         self.idS = id
         return
+    
+    def getIdS(self):
+        return self.idS
 
     def clearSub(self):
         self.edos.clear()
         self.subEstados.clear()
+        self.transiciones.clear()
         return
 
     def addSubEstados(self, edo):
@@ -29,6 +35,10 @@ class Subconjunto(object):
 
     def addEdo(self, edo):
         self.edos.append(edo)
+        return
+    
+    def addTransicion(self, simb, subc):
+        self.transiciones.append(TransicionSubconjunto(simb, subc))
         return
 
     def isRepeated(self, edos):
@@ -39,7 +49,7 @@ class Subconjunto(object):
         return
 
     def printSubconjunto(self):
-        print("Subconjunto S", self.idS, "con transicion: ", self.simb)
+        print("Subconjunto S", self.idS)
         print("SubEstados: ")
         for sub in self.subEstados:
             print(sub.getIdEdo())

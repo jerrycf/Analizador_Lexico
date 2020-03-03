@@ -8,6 +8,7 @@ class Cola:
     def add(self, item):
         #self.items.insert(0,item)
         self.items.append(item)
+        return
 
     def pop(self):
         #return self.items.pop()
@@ -15,3 +16,7 @@ class Cola:
 
     def size(self):
         return len(self.items)
+    
+    def clear(self):
+        self.items.clear()
+        return
