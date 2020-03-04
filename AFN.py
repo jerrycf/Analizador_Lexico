@@ -272,6 +272,7 @@ class AFN(object):
         # alfabetoActual = set()
         inQ = Cola() # Cola para ir evaluando los estados que se van encontrando
         A = Cola() # Cola de los subconjuntos que se deben de analizar.
+        subConTemp = []
         cont = 0
         # Se crea una instancia de subconjunto para empezar la busqueda.
         S = Subconjunto(cont)
@@ -280,12 +281,12 @@ class AFN(object):
         S.setSimb('Epsilon')
         # poder después empezar a realizar las busquedas con Epsilon y otros símbolos
         A.add(S)
-        subconjuntos.append(S)
+        #subconjuntos.append(S)
         print("Empieza la cola con el estado inicial.")
+
         while not A.isEmpty():
             S = A.pop()
-            subConTemp = []
-
+            print("Empezando a evaluar S", S.getIdS())
             for subEdo in S.subEstados:
                 print("SubEstado de S", S.getIdS(), ": ", subEdo.getIdEdo())
                 self.resetChecked()
@@ -330,10 +331,11 @@ class AFN(object):
                 S.addTransicion(temp.simb, temp)
                 # agregar los demas subconjuntos a la cola A para seguir las busquedas
                 A.add(temp)
-            
+            subConTemp.clear()
             S.printSubconjunto()
             subconjuntos.append(S)
-
+            if cont > 10:
+                exit(0)
         return 
 
     def printAFN(self):

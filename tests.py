@@ -1,10 +1,11 @@
 from Cola import Cola
 
 A = Cola()
-s1 = {1,2,3}
-s2 = {1,2,3}
-B = []
-s3 = {1,2,3}
-s4 = {1,2,3}
+A.add(1)
+A.add(2)
+print(len(A.items))
+A.pop()
+A.pop()
+print(len(A.items))
 
 
