@@ -11,9 +11,11 @@ class TransicionSubconjunto(object):
 
     def setSimb(self, c):
         self.simb = c
+        return
     
     def setSubconjunto(self, subc):
         self.subconjunto = subc
+        return
 
     def isEpsilon(self):
         if self.simb == 'Epsilon':  
@@ -22,3 +24,4 @@ class TransicionSubconjunto(object):
     
     def printTransicion(self):
         print ("con ", self.simb, " a ", self.subconjunto.getIdS(), "\n")
+        return
