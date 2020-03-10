@@ -203,67 +203,47 @@ class AFN(object):
         return 
 
     def toAFD(self):
-        # Se checan todas las transiciones con Epsilon en el estado inicial
-        # y se agregan a la cola para evaluarlos después
-        print("Funcion para convertir el AFN general a AFD")
-        subconjuntos = [] # Donde se guardan los subconjuntos para generar el AFD final
-        alfabetoActual = set()
-        A = Cola() # Cola para evaluar los subconjuntos 
-        simbActual = 'Epsilon'
+        A = Cola()
+        inQ = Cola()
+        alfabetoAct = set()
+        subconjuntos = []
         cont = 0
         S = Subconjunto(cont)
+        S.setSimb('Epsilon')
         S.addSubEstados(self.edoIni)
-        # Se agregan a una cola todos los estados que transiciona el estado inicial
-        for tran in self.edoIni.transiciones:
-            print("Transicion desde el edoIni para AFD: ", tran.getEdo().getIdEdo())
-            A.add(tran.getEdo())
-            S.addEdo(tran.getEdo())
-            # print("edoIni -> ", tran.getEdo().getIdEdo())
-        SEdoIni = Estado(cont)
-        # Se recorre la cola para buscar todas las transiciones de epsilon
+        A.add(S)
+        # Checar si se necesita una nueva cola para los subconjuntos
         while not A.isEmpty():
-            #edo = A.pop()
             S = A.pop()
-            print("edoIni -> ", S.getIdEdo())
-            for tran in S.transiciones:
-                # Hay que marcar los estados, si no se puede llegar a ciclar o agregar 
-                # subconjuntos repetidos 
-                if tran.simb == simbActual or tran.simb == 'Epsilon':
-                    # Se sigue la transicion del simbolo actual, se agrega el estado al que apunta a la cola
-                    A.add(tran.getEdo())
-                    S.addEdo(tran.getEdo())
-                else:
-                    # Checar si el estado no ha sido analizado antes
-                    # Se encontró un nuevo símbolo, se debe de crear un nuevo subconjunto con dicho símbolo
-                    # si es que ese símbolo no ha sido agregado antes.
-                    if tran.simb not in alfabetoActual:
-                        alfabetoActual.add(tran.simb)
-                        # crear una instancia de subconjunto por cada nuevo símbolo que se encuentra
-                        Snew = Subconjunto()
-                        Snew.setIdS(cont)
-                        Snew.addSubEstados(tran.getEdo())
-                        subconjuntos.append(Snew)
-                        # Crear un estado para representar el nuevo subconjunto creado
-                        Sedo = Estado(cont)
-                        cont += 1
-                        SEdoIni.addTransicion(tran.simb, Sedo)
-                    else:
-                        print("Simbolo ", simbActual, " ya encontrado")
-                        # *Buscar en el arreglo de subconjuntos el correspondiente 
-                        # para agregarle el estado en subEstados
-                        for subconjunto in subconjuntos:
-                            if subconjunto.getSimb() == simbActual:
-                                subconjunto.addSubEstados(tran.getEdo())
-        # *Crear un estado para representar S0
-        subconjuntos.insert(0, S)
-        for subconjunto in subconjuntos: 
-            subconjunto.printSubconjunto()
+            self.resetChecked()
+            alfabetoAct.clear()
+            for subEdo in S.subEstados:
+                print("SubEstaados en S", cont - 1, " : ", subEdo.getIdEdo())
+                inQ.add(subEdo)
+                while not inQ.isEmpty():
+                    edo = inQ.pop()
+                    for trans in edo.transiciones:
+                        if trans.simb == 'Epsilon':
+                            print("Transicion con Epsilon")
+                            S.addEdo(trans.getEdo())
+                            inQ.add(trans.getEdo())
+                        else:
+                            print("Transicion con símbolo que no es Epsilon")
+                            if trans.simb in alfabetoAct:
+                                print("Símbolo ", trans.simb, " ya encontrado anteriormente")
+                                for temp in subconjuntos:
+                                    if temp.simb == trans.simb:
+                                        temp.addSubEstados()
+                            else:
+                                print("Primera vez encontrado el simbolo:", trans.simb)
+                                alfabetoAct.add(trans.simb)
+                                Snew = Subconjunto(cont)
+                                cont += 1
+                                Snew.setSimb(trans.simb)
+                                Snew.addSubEstados(trans.getEdo())
+                                subconjuntos.append(Snew)
 
-
-        # subconjuntos.append(S)
-        print("Simbolos encontrados: ", alfabetoActual)
-        
-        
+        print("Evaluado todos los subconjuntos.")
         return
 
     def toAFD2(self):
