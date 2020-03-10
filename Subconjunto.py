@@ -7,7 +7,6 @@ class Subconjunto(object):
     def __init__(self, id = -1):
         self.idS = id
         self.simb = 'Epsilon'
-        # self.subEstados = []
         self.subEstados = set()
         self.edos = []
         self.transiciones = []
@@ -66,3 +65,7 @@ class Subconjunto(object):
         print("Estados en el subconjunto: ")
         for edo in self.edos:
             print("Estado: ", edo.getIdEdo())
+        
+        print("Transiciones del subconjunto: ")
+        for trans in self.transiciones:
+            print("Simbolo: ", trans.getSimb(), " al subconjunto: ", trans.getSubconjunto().getIdS())
